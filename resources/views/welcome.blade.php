@@ -1,95 +1,88 @@
 <!doctype html>
 <html lang="{{ app()->getLocale() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#3387C7">
+    <meta name="description" content="Banny PROMO">
+    <link rel="icon" href="{{asset('pwa/icons/icon-128x128.png')}}">
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+    <title>BANNY</title>
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="{{asset('pwa/manifest.json')}}">
 
-            .full-height {
-                height: 100vh;
-            }
+    <!-- Styles -->
+    <style>
+        html,
+        body {
+            background-color: #3387C7;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 100;
+            height: 100vh;
+            margin: 0;
+        }
 
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
+        section {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            align-content: center;
+            justify-content: center;
+        }
+    </style>
 
-            .position-ref {
-                position: relative;
-            }
+    <script type="text/javascript" src="{{asset('pwa/instascan.min.js')}}"></script>
+</head>
 
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
-            </div>
+<body>
+    <section>
+        <div class="content">
+            <h1> BANNY</h1>
+            <video id="preview"></video>
         </div>
-    </body>
+    </section>
+</body>
+
+
+
+<script>
+    var base_service = "{{asset('pwa/service-worker.js')}}";
+    // CODELAB: Register service worker.
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register(base_service)
+        .then(function () {
+            console.log('service worker registered');
+        })
+        .catch(function () {
+            console.warn('service worker failed');
+        });
+    }
+</script>
+
+
+
+<script>
+    scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 5 });
+    scanner.addListener('scan', function (content, image) {
+        scans.unshift({ date: +(Date.now()), content: content });
+    });
+    Instascan.Camera.getCameras().then(function (cameras) {
+      cameras = cameras;
+      if (cameras.length > 0) {
+        activeCameraId = cameras[0].id;
+        scanner.start(cameras[0]);
+      } else {
+        console.error('No cameras found.');
+      }
+    }).catch(function (e) {
+      console.error(e);
+    });
+</script>
+
 </html>
