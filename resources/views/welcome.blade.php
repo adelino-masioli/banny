@@ -37,7 +37,8 @@
         }
     </style>
 
-    <script type="text/javascript" src="{{asset('pwa/instascan.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 </head>
 
 <body>
@@ -68,21 +69,19 @@
 
 
 <script>
-    scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 5 });
-    scanner.addListener('scan', function (content, image) {
-        scans.unshift({ date: +(Date.now()), content: content });
-    });
-    Instascan.Camera.getCameras().then(function (cameras) {
-      cameras = cameras;
-      if (cameras.length > 0) {
-        activeCameraId = cameras[0].id;
-        scanner.start(cameras[0]);
-      } else {
-        console.error('No cameras found.');
-      }
-    }).catch(function (e) {
-      console.error(e);
-    });
+    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+      scanner.addListener('scan', function (content) {
+        alert(content);
+      });
+      Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+          scanner.start(cameras[0]);
+        } else {
+          console.error('No cameras found.');
+        }
+      }).catch(function (e) {
+        console.error(e);
+      });
 </script>
 
 </html>
