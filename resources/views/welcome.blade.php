@@ -56,6 +56,8 @@
         <video muted playsinline id="qr-video"></video>
     </div>
     <div id="file-selector"></div>
+
+    <span id="cam-qr-result">None</span>
 </body>
 
 
