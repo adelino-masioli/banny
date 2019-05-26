@@ -42,6 +42,13 @@
             font-size: 14px;
             text-align: center;
         }
+
+        #preview {
+            display: block;
+            width: 354px;
+            height: 354px;
+            object-fit: fill;
+        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -49,7 +56,12 @@
 </head>
 
 <body>
-    <video id="preview"></video>
+    <section>
+        <div class="content">
+            <h1> BANNY</h1>
+            <video width="354" height="354" id="preview"></video>
+        </div>
+    </section>
 </body>
 
 
@@ -77,7 +89,7 @@
       });
       Instascan.Camera.getCameras().then(function (cameras) {
         if (cameras.length > 0) {
-          scanner.start(cameras[0]);
+          scanner.start(cameras[1]);
         } else {
           console.error('No cameras found.');
         }
