@@ -43,17 +43,19 @@
             text-align: center;
         }
 
-        #preview {
+        #qr-video {
             width: 100%;
+            height: 100%;
         }
     </style>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 </head>
 
 <body>
-    <video id="preview"></video>
+    <div>
+        <span id="cam-has-camera"></span>
+        <video muted playsinline id="qr-video"></video>
+    </div>
+    <div id="file-selector"></div>
 </body>
 
 
@@ -74,20 +76,40 @@
 
 
 
-<script>
-    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-      scanner.addListener('scan', function (content) {
-        alert(content);
-      });
-      Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-          scanner.start(cameras[1]);
-        } else {
-          console.error('No cameras found.');
+<script type="module">
+    var url_1 = "{{asset('pwa/qr-scanner.min.js')}}";
+    var url_2 = "{{asset('pwa/qr-scanner-worker.min.js')}}";
+
+    import QrScanner from './pwa/qr-scanner.min.js';
+    QrScanner.WORKER_PATH = './pwa/qr-scanner-worker.min.js';
+    const video = document.getElementById('qr-video');
+    const camHasCamera = document.getElementById('cam-has-camera');
+    const camQrResult = document.getElementById('cam-qr-result');
+    const camQrResultTimestamp = document.getElementById('cam-qr-result-timestamp');
+    const fileSelector = document.getElementById('file-selector');
+    const fileQrResult = document.getElementById('file-qr-result');
+    function setResult(label, result) {
+        label.textContent = result;
+        camQrResultTimestamp.textContent = new Date().toString();
+        label.style.color = 'teal';
+        clearTimeout(label.highlightTimeout);
+        label.highlightTimeout = setTimeout(() => label.style.color = 'inherit', 100);
+    }
+    // ####### Web Cam Scanning #######
+    //QrScanner.hasCamera().then(hasCamera => camHasCamera.textContent = hasCamera);
+    const scanner = new QrScanner(video, result => setResult(camQrResult, result));
+    scanner.start();
+    scanner.setInversionMode('original');
+    // ####### File Scanning #######
+    fileSelector.addEventListener('change', event => {
+        const file = fileSelector.files[0];
+        if (!file) {
+            return;
         }
-      }).catch(function (e) {
-        console.error(e);
-      });
+        QrScanner.scanImage(file)
+            .then(result => setResult(fileQrResult, result))
+            .catch(e => setResult(fileQrResult, e || 'No QR code found.'));
+    });
 </script>
 
 </html>
